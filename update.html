@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 20px;
+            padding: 0;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+        select, input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical; /* Allow vertical resizing of textarea */
+        }
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Update API</h1>
+    <form id="update-api-form">
+        <label for="api-id">Select Data to Update:</label>
+        <select id="api-id" name="api-id">
+            <option value="">Select...</option> <!-- Initial placeholder -->
+        </select><br><br>
+        <label for="name">New Data Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="description">New Description:</label><br>
+        <textarea id="description" name="description" rows="4" cols="50" required></textarea><br><br>
+        <button type="submit">Update Data</button>
+    </form>
+
+    <script>
+        // Fetch APIs and populate dropdown
+        fetch('/apis')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('api-id');
+            data.apis.forEach(api => {
+                const option = document.createElement('option');
+                option.value = api._id;
+                option.textContent = api.name;
+                select.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error fetching APIs:', error));
+
+        // Handle form submission
+        document.getElementById('update-api-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = {
+                id: document.getElementById('api-id').value,
+                name: document.getElementById('name').value,
+                description: document.getElementById('description').value
+            };
+
+            fetch('/api/' + formData.id, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                alert('Data updated successfully');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Failed to update Data');
+            });
+        });
+    </script>
+</body>
+</html>
+

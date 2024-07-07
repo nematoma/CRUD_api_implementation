@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DATA Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 20px;
+            padding: 0;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical; /* Allow vertical resizing of textarea */
+        }
+        button[type="submit"], button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button[type="submit"]:hover, button:hover {
+            background-color: #45a049;
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>DATA Manager</h1>
+
+    <form id="create-api-form">
+        <label for="name">Data name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description" rows="4" cols="50" required></textarea><br><br>
+        <button type="submit">Create Data</button>
+    </form>
+
+    <div class="btn-container">
+        <button onclick="location.href='/update'">Update Data</button>
+        <button onclick="location.href='/delete'">Delete Data</button>
+    </div>
+
+    <script>
+        document.getElementById('create-api-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = {
+                name: document.getElementById('name').value,
+                description: document.getElementById('description').value
+            };
+
+            fetch('/api', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                alert('Data created successfully');
+                // Optionally, update UI or redirect to another page
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Failed to create Data');
+            });
+        });
+    </script>
+</body>
+</html>
